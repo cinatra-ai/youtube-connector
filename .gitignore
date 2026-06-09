@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build output (tsc outDir)
+dist/
+
+# Lockfile — this repo ships no committed lockfile (see ci.yml); local installs generate one
+pnpm-lock.yaml
+
+# npm pack output
+*.tgz
+
+# Environment
+.env
+.env.*
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# Editors
+.idea/
+.vscode/
