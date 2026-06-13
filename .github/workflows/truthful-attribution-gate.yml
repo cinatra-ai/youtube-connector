@@ -1,0 +1,35 @@
+name: truthful-attribution-gate
+
+# Thin caller for the org-reusable truthful-attribution-gate in cinatra-ai/ci.
+# WARN mode (advisory): findings are surfaced as annotations and a step summary,
+# but the check is ALWAYS green and never fails a PR. It is intentionally NOT a
+# required status check, so it does not gate merges. No .github/gate-suite.json
+# is committed (this caller exercises the advisory path only).
+#
+# Pinned to the immutable ci `main` HEAD commit, which is one commit ahead of the
+# v0.1.0 tag. The trailing `# v0.1.0+sha.8eede10` comment records that lineage as
+# semver build metadata (it is NOT a claim that this line is the v0.1.0 tag).
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+  checks: read
+  # actions:read is MANDATORY: the reusable gate reads its own Actions run via the
+  # REST API to verify it is running at the pinned workflow SHA. With an explicit
+  # permissions block, any omitted scope defaults to `none`, and a called reusable
+  # workflow cannot exceed the caller's grant -- so omitting this makes the job
+  # fail to start (a red/missing check that warn mode cannot rescue, because it
+  # fails before any step runs). Do not drop this line.
+  actions: read
+
+jobs:
+  truthful-attribution-gate:                 # caller job id MUST stay this exact string
+    uses: cinatra-ai/ci/.github/workflows/truthful-attribution-gate.yml@8eede1022e835997d94974e4bd6205daf72131a2 # v0.1.0+sha.8eede10
+    with:
+      mode: warn
+      ref: 8eede1022e835997d94974e4bd6205daf72131a2
