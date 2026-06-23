@@ -1,5 +1,6 @@
 import type { ExtensionHostContext } from "@cinatra-ai/sdk-extensions";
 import { Main, PageHeader, PageContent, NangoUserConnectButton } from "@cinatra-ai/sdk-ui/marketplace";
+import { getYouTubeDeps } from "./deps";
 
 type SettingsYouTubePageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -29,6 +30,22 @@ export async function YouTubeSettingsPage({ searchParams, ctx }: SettingsYouTube
   const connections =
     (await ctx.nango.getPrimarySavedConnections?.({ scope: "user", userId: actor.userId })) ?? {};
   const connection = connections.youtube;
+
+  // Connecting YouTube requires the shared Google OAuth client (clientId +
+  // secret, configured in the google-oauth connector) to exist first. Read the
+  // connector-level status through the host-injected google-oauth port
+  // (deps.oauth.getStatus reports "connected" once the client is configured,
+  // independent of any user connection). Fail CLOSED: if the host google-oauth
+  // service is unavailable or the manifest predates this connector's
+  // `capabilities` port request (the granted-port proxy fail-louds), treat the
+  // client as UNCONFIGURED and keep the button disabled rather than send the
+  // user into a guaranteed-fail flow.
+  let oauthConfigured = false;
+  try {
+    oauthConfigured = (await getYouTubeDeps().oauth.getStatus()).status === "connected";
+  } catch {
+    oauthConfigured = false;
+  }
 
   return (
     <Main className="min-h-screen">
@@ -61,8 +78,37 @@ export async function YouTubeSettingsPage({ searchParams, ctx }: SettingsYouTube
             connectLabel="Connect YouTube"
             reconnectLabel="Reconnect"
             nangoFrontendConfig={nangoFrontendConfig}
+            disabled={!oauthConfigured}
+            prerequisiteErrorMessage={
+              oauthConfigured
+                ? undefined
+                : "Save your Google OAuth client ID and secret in Google OAuth configuration first."
+            }
           />
         </section>
+
+        {oauthConfigured ? null : (
+          <p className="-mt-3 text-sm leading-6 text-muted-foreground">
+            Connecting requires shared Google OAuth credentials. Save your client
+            ID and secret in{" "}
+            <a
+              href="/connectors/cinatra-ai/google-oauth-connector/setup"
+              className="underline underline-offset-4 hover:text-foreground"
+            >
+              Google OAuth configuration
+            </a>{" "}
+            first — create them in the{" "}
+            <a
+              href="https://console.cloud.google.com/apis/credentials"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-4 hover:text-foreground"
+            >
+              Google Cloud Console
+            </a>
+            .
+          </p>
+        )}
       </PageContent>
     </Main>
   );
