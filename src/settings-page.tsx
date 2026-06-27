@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ExtensionHostContext } from "@cinatra-ai/sdk-extensions";
 import { Main, PageHeader, PageContent, NangoUserConnectButton } from "@cinatra-ai/sdk-ui/marketplace";
 import { getYouTubeDeps } from "./deps";
@@ -91,21 +92,21 @@ export async function YouTubeSettingsPage({ searchParams, ctx }: SettingsYouTube
           <p className="-mt-3 text-sm leading-6 text-muted-foreground">
             Connecting requires shared Google OAuth credentials. Save your client
             ID and secret in{" "}
-            <a
+            <Link
               href="/connectors/cinatra-ai/google-oauth-connector/setup"
               className="underline underline-offset-4 hover:text-foreground"
             >
               Google OAuth configuration
-            </a>{" "}
+            </Link>{" "}
             first — create them in the{" "}
-            <a
+            <Link
               href="https://console.cloud.google.com/apis/credentials"
               target="_blank"
               rel="noopener noreferrer"
               className="underline underline-offset-4 hover:text-foreground"
             >
               Google Cloud Console
-            </a>
+            </Link>
             .
           </p>
         )}
