@@ -1,6 +1,9 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import type { ExtensionHostContext } from "@cinatra-ai/sdk-extensions";
 import { Main, PageHeader, PageContent, NangoUserConnectButton } from "@cinatra-ai/sdk-ui/marketplace";
+import { SearchParamToast } from "@cinatra-ai/sdk-ui/search-param-toast";
+import { YOUTUBE_FLASH_TOASTS } from "./settings-flash";
 import { getYouTubeDeps } from "./deps";
 
 type SettingsYouTubePageProps = {
@@ -8,12 +11,8 @@ type SettingsYouTubePageProps = {
   ctx: ExtensionHostContext;
 };
 
-function pickSearchParam(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
-
 export async function YouTubeSettingsPage({ searchParams, ctx }: SettingsYouTubePageProps) {
-  const [resolvedSearchParams, actor] = await Promise.all([
+  const [, actor] = await Promise.all([
     searchParams ?? Promise.resolve({} as Record<string, string | string[] | undefined>),
     ctx.authSession.getActor(),
   ]);
@@ -22,7 +21,6 @@ export async function YouTubeSettingsPage({ searchParams, ctx }: SettingsYouTube
     // check so a misconfigured port never silently mis-scopes user data.
     throw new Error("[youtube-connector] settings-page: no userId on actor");
   }
-  const errorMessage = pickSearchParam(resolvedSearchParams.error);
   // Nango data via the host-injected `ctx.nango` port — the connector no
   // longer imports `@cinatra-ai/nango-connector`.
   // Pass the explicit user scope: the host getter forwards opts straight to
@@ -50,17 +48,19 @@ export async function YouTubeSettingsPage({ searchParams, ctx }: SettingsYouTube
 
   return (
     <Main className="min-h-screen">
+      {/* Codes-only flash island (replaces the retired raw ?error= div-banner,
+          which reflected the untrusted query-string value verbatim). The
+          static code->message map lives in ./settings-flash; a crafted
+          ?error=<spoofed text> that isn't a known code maps to nothing and is
+          never toasted. */}
+      <Suspense fallback={null}>
+        <SearchParamToast toasts={YOUTUBE_FLASH_TOASTS} />
+      </Suspense>
       <PageHeader
         title="YouTube"
         description="Connect the YouTube account Cinatra should use for transcript discovery and video workflows."
       />
       <PageContent className="flex flex-col gap-6 pb-8">
-        {errorMessage ? (
-          <div className="rounded-control border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-            {errorMessage}
-          </div>
-        ) : null}
-
         <section className="soft-panel rounded-card p-5 flex items-center justify-between gap-4">
           <div>
             <p className="text-sm font-medium text-foreground">YouTube account</p>
