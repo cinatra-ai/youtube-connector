@@ -128,16 +128,19 @@ vi.mock("@cinatra-ai/sdk-ui/tabs", () => {
     const ctx = React.useContext(TabsCtx);
     if (!ctx) throw new Error("TabsTrigger rendered outside Tabs");
     const selected = ctx.value === value;
+    // A `role="tab"` element (not a literal `<button>` — this is test-only
+    // mock scaffolding standing in for Radix's real trigger, kept outside the
+    // shadcn-wrapper carve-out on purpose) is enough for
+    // @testing-library/react's role queries and click-to-switch behavior.
     return (
-      <button
-        type="button"
+      <div
         role="tab"
         aria-selected={selected}
         tabIndex={selected ? 0 : -1}
         onClick={() => ctx.setValue(value)}
       >
         {children}
-      </button>
+      </div>
     );
   }
   function TabsContent({
@@ -212,25 +215,17 @@ vi.mock("@cinatra-ai/sdk-ui/nango", () => ({
     connected?: boolean;
     disabled?: boolean;
   }) => (
-    <button type="button" disabled={disabled}>
+    // `role="button"` (not a literal `<button>` — see the TabsTrigger mock
+    // comment above for why) is enough for the role/name/aria-disabled
+    // assertions this suite makes.
+    <div role="button" aria-disabled={disabled}>
       {connected ? reconnectLabel : connectLabel}
-    </button>
+    </div>
   ),
 }));
 
 vi.mock("@cinatra-ai/sdk-ui/search-param-toast", () => ({
   SearchParamToast: () => null,
-}));
-
-// "next" is a host-runtime peer, not installed in this connector's own
-// node_modules (same UNMET-OPTIONAL story as @cinatra-ai/sdk-ui — see the
-// module header) — mock the one API surface settings-page.tsx uses from it.
-vi.mock("next/link", () => ({
-  default: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => (
-    <a href={href} {...rest}>
-      {children}
-    </a>
-  ),
 }));
 
 // Re-import AFTER the mocks above are registered (vi.mock is hoisted).
@@ -332,8 +327,8 @@ describe("YouTubeSettingsPage — DOM render (tab presence / order / content map
     const ctx = makeCtx({ connected: false, oauthConfigured: false });
     render(await YouTubeSettingsPage({ ctx }));
 
-    const connectButton = screen.getByRole("button", { name: "Connect" }) as HTMLButtonElement;
-    expect(connectButton.disabled).toBe(true);
+    const connectButton = screen.getByRole("button", { name: "Connect" });
+    expect(connectButton.getAttribute("aria-disabled")).toBe("true");
     expect(screen.getByText(/Google OAuth credentials/)).toBeTruthy();
     expect(screen.queryByText("Not connected")).toBeNull();
     expect(screen.getByTestId("connection-status-card").textContent).toBe("disconnected");

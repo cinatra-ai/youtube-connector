@@ -30,6 +30,7 @@
 
 import { Suspense } from "react";
 import type { ExtensionHostContext } from "@cinatra-ai/sdk-extensions";
+import { Link } from "./components/ui/link";
 import { ConnectorSetupPage } from "@cinatra-ai/sdk-ui/connector-setup-page";
 import { ConnectorSetupColumns } from "@cinatra-ai/sdk-ui/connector-setup-columns";
 import { ConnectionStatusCard } from "@cinatra-ai/sdk-ui/connection-status-card";
@@ -127,12 +128,12 @@ export async function YouTubeSettingsPage({ searchParams, ctx }: SettingsYouTube
                     // Help tab (mirrors the connector-setup-tabs precedent).
                     <p className="text-sm leading-6 text-muted-foreground">
                       Connecting requires shared{" "}
-                      <a
+                      <Link
                         href="/connectors/cinatra-ai/google-oauth-connector/setup"
                         className="underline underline-offset-4 hover:text-foreground"
                       >
                         Google OAuth credentials
-                      </a>
+                      </Link>
                       .
                     </p>
                   )}
@@ -188,21 +189,21 @@ export async function YouTubeSettingsPage({ searchParams, ctx }: SettingsYouTube
             <p className="text-sm leading-6 text-muted-foreground">
               Connecting requires a shared Google OAuth client. Save its client
               ID and secret in{" "}
-              <a
+              <Link
                 href="/connectors/cinatra-ai/google-oauth-connector/setup"
                 className="underline underline-offset-4 hover:text-foreground"
               >
                 Google OAuth configuration
-              </a>{" "}
+              </Link>{" "}
               first — create them in the{" "}
-              <a
+              <Link
                 href="https://console.cloud.google.com/apis/credentials"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline underline-offset-4 hover:text-foreground"
               >
                 Google Cloud Console
-              </a>
+              </Link>
               .
             </p>
           </div>
