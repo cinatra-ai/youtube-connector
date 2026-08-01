@@ -7,11 +7,11 @@ project's merged pull request and release-tag history.
 
 Pairs with Cinatra 0.1.7, which removes the core YouTube client.
 
-- feat: own the YouTube connection client, relocated from Cinatra core and registered under the same existing host capability id (provider flip, no contract change), persisting and authorizing through published host capabilities including the instance-connection gate (cinatra#975 W3) (#36)
+- feat: own the YouTube connection client, relocated from Cinatra core and registered under the same existing host capability id (provider flip, no contract change), persisting and authorizing through published host capabilities including the instance-connection gate (#36)
 
 ## v0.1.3 — 2026-07-04
 
-- feat: final connection access-scoping declaration — default scope "user" (cinatra#954 W4) (#35)
+- feat: final connection access-scoping declaration — default scope "user" (#35)
 - test: add register(ctx) shape coverage + drop stray package-lock.json (#31)
 - chore: add cinatra.vendor connector provenance metadata (#32)
 - chore(deps): declare cinatra.consumes for closure-gate enrollment (#33)
