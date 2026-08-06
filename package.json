@@ -50,6 +50,7 @@
       "name": "Cinatra"
     },
     "displayName": "YouTube",
+    "logo": "./cinatra/logo.svg",
     "requestedHostPorts": [
       "authSession",
       "nango",
