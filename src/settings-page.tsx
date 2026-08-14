@@ -112,20 +112,23 @@ export async function YouTubeSettingsPage({ searchParams, ctx }: SettingsYouTube
             state="ready"
             fields={
               <div className="flex flex-col gap-6">
-                <section className="soft-panel rounded-panel p-5">
-                  {connection ? (
-                    <>
-                      <p className="text-sm font-medium text-foreground">
-                        YouTube account
-                      </p>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {`Connected${connection.email ? ` as ${connection.email}` : ""}`}
-                      </p>
-                    </>
-                  ) : (
-                    // Not-connected card holds only the OAuth-credentials
-                    // prerequisite line — the full how-to prose lives on the
-                    // Help tab (mirrors the connector-setup-tabs precedent).
+                {connection ? (
+                  <section className="soft-panel rounded-panel p-5">
+                    <p className="text-sm font-medium text-foreground">
+                      YouTube account
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {`Connected${connection.email ? ` as ${connection.email}` : ""}`}
+                    </p>
+                  </section>
+                ) : oauthConfigured ? null : (
+                  // Not-connected + OAuth-not-configured card (hint gating
+                  // restored, #61): holds only the OAuth-credentials
+                  // prerequisite line — the full how-to prose lives on the
+                  // Help tab. Gated on `oauthConfigured` (not on `!connection`
+                  // alone) so it never shows once the shared client is already
+                  // configured, mirroring the gmail-connector setup page.
+                  <section className="soft-panel rounded-panel p-5">
                     <p className="text-sm leading-6 text-muted-foreground">
                       Connecting requires shared{" "}
                       <Link
@@ -136,8 +139,8 @@ export async function YouTubeSettingsPage({ searchParams, ctx }: SettingsYouTube
                       </Link>
                       .
                     </p>
-                  )}
-                </section>
+                  </section>
+                )}
 
                 {/* Connect / Reconnect only (spec §II item 7 for a
                     single-connection form). NangoUserConnectButton handles

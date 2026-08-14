@@ -333,4 +333,20 @@ describe("YouTubeSettingsPage — DOM render (tab presence / order / content map
     expect(screen.queryByText("Not connected")).toBeNull();
     expect(screen.getByTestId("connection-status-card").textContent).toBe("disconnected");
   });
+
+  // Regression #61: the prerequisite hint used to be gated on `!connection`
+  // alone, so it kept rendering here even though the shared Google OAuth
+  // client is already configured and the Connect button is correctly
+  // enabled. Restores the `oauthConfigured` gate (gmail-connector pattern):
+  // once OAuth is configured, the not-yet-connected state shows no hint at
+  // all — just the disconnected status card and an enabled Connect button.
+  it("disconnected + CONFIGURED OAuth: connect button enabled, no prerequisite hint (regression #61)", async () => {
+    const ctx = makeCtx({ connected: false, oauthConfigured: true });
+    render(await YouTubeSettingsPage({ ctx }));
+
+    const connectButton = screen.getByRole("button", { name: "Connect" });
+    expect(connectButton.getAttribute("aria-disabled")).toBe("false");
+    expect(screen.queryByText(/Connecting requires shared/)).toBeNull();
+    expect(screen.getByTestId("connection-status-card").textContent).toBe("disconnected");
+  });
 });
