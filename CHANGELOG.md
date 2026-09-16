@@ -3,6 +3,10 @@
 All notable changes to this project are documented here, derived from the
 project's merged pull request and release-tag history.
 
+## v0.1.5 — 2026-09-16
+
+- ci: commit the repository's named check suite (.github/gate-suite.json, suite youtube-connector-core 2026.09.1) so a merge into this repository can carry a Gate-suite verification arm
+
 ## v0.1.4 — 2026-07-07
 
 Pairs with Cinatra 0.1.7, which removes the core YouTube client.
