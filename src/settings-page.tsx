@@ -30,7 +30,7 @@
 
 import { Suspense } from "react";
 import type { ExtensionHostContext } from "@cinatra-ai/sdk-extensions";
-import { Link } from "./components/ui/link";
+import { Link } from "./ui/link";
 import { ConnectorSetupPage } from "@cinatra-ai/sdk-ui/connector-setup-page";
 import { ConnectorSetupColumns } from "@cinatra-ai/sdk-ui/connector-setup-columns";
 import { ConnectionStatusCard } from "@cinatra-ai/sdk-ui/connection-status-card";
